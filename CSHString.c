@@ -130,7 +130,7 @@ int8_t CSH_string_cstr_fit(S_CSHString* in_this, CSHConstCharPtr_t in_str)
     return CSHSSC_NONE;
 }
 
-size_t CSH_string_size_cstr(CSHConstCharPtr_t in_str, size_t in_maxSize)
+size_t CSH_cstr_size(CSHConstCharPtr_t in_str, size_t in_maxSize)
 {
     if (in_str == NULL)
     {
@@ -854,6 +854,26 @@ size_t CSH_string_find_cstr(S_CSHString* in_this, size_t in_pos, CSHConstCharPtr
     return (in_pos + (tempCharPtr - (in_this->m_strPtr + in_pos)));
 }
 
+size_t CSH_cstr_find(CSHConstCharPtr_t in_strOne, size_t in_maxSize, size_t in_pos, CSHConstCharPtr_t in_strTwo)
+{
+    if (in_strOne == NULL || in_strTwo == NULL)
+    {
+        return CSH_STRING_NPOS;
+    }
+    if (in_pos >= CSH_STRNLEN_MF(in_strOne, (in_maxSize + 1)))
+    {
+        return CSH_STRING_NPOS;
+    }
+
+    CSHCharPtr_t tempCharPtr = strstr((in_strOne + in_pos), in_strTwo);
+    if (tempCharPtr == NULL)
+    {
+        return CSH_STRING_NPOS;
+    }
+
+    return (in_pos + (tempCharPtr - (in_strOne + in_pos)));
+}
+
 size_t CSH_string_find(S_CSHString* in_this, size_t in_pos, S_CSHString* in_str)
 {
     if (in_this == NULL || in_str == NULL)
@@ -909,6 +929,39 @@ size_t CSH_string_rfind_cstr(S_CSHString* in_this, size_t in_pos, CSHConstCharPt
     }
 
     return (in_pos + (lastCharPtr - (in_this->m_strPtr + in_pos)));
+}
+
+size_t CSH_cstr_rfind(CSHConstCharPtr_t in_strOne, size_t in_maxSize, size_t in_pos, CSHConstCharPtr_t in_strTwo)
+{
+    if (in_strOne == NULL || in_strTwo == NULL)
+    {
+        return CSH_STRING_NPOS;
+    }
+    if (in_pos >= CSH_STRNLEN_MF(in_strOne, (in_maxSize + 1)))
+    {
+        return CSH_STRING_NPOS;
+    }
+
+    CSHCharPtr_t tempCharPtr = strstr((in_strOne + in_pos), in_strTwo);
+    if (tempCharPtr == NULL)
+    {
+        return CSH_STRING_NPOS;
+    }
+
+    CSHCharPtr_t lastCharPtr = tempCharPtr;
+    while (true)
+    {
+        tempCharPtr = strstr(lastCharPtr, in_strTwo);
+        if (tempCharPtr != NULL)
+        {
+            lastCharPtr = tempCharPtr;
+            continue;
+        }
+
+        break;
+    }
+
+    return (in_pos + (lastCharPtr - (in_strOne + in_pos)));
 }
 
 size_t CSH_string_rfind(S_CSHString* in_this, size_t in_pos, S_CSHString* in_str)
@@ -996,6 +1049,22 @@ int8_t CSH_string_compare_cstr(S_CSHString* in_strOne, CSHConstCharPtr_t in_strT
         {
             return CSHSSC_BAD_INPUT_ARG;
         }
+    }
+
+    return CSHSSC_NONE;
+}
+
+int8_t CSH_cstr_compare(CSHConstCharPtr_t in_strOne, size_t in_maxSize, CSHConstCharPtr_t in_strTwo)
+{
+    if (in_strOne == NULL || in_strTwo == NULL)
+    {
+        return CSHSSC_BAD_INPUT_STR;
+    }
+
+    int result = CSH_STRNCMP_MF(in_strOne, in_strTwo, in_maxSize);
+    if (result != 0)
+    {
+        return CSHSSC_BAD_INPUT_ARG;
     }
 
     return CSHSSC_NONE;
