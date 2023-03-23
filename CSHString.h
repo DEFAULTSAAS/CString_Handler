@@ -5,6 +5,13 @@
 #include <stdbool.h>
 #include <malloc.h>
 
+#ifdef _WIN32
+inline void* CSH_alloca(size_t in_size) { return _alloca(in_size); }
+#else
+#include<alloca.h>
+inline void* CSH_alloca(size_t in_size) { return alloca(in_size); }
+#endif
+
 typedef char CSHChar_t;
 typedef char* CSHCharPtr_t;
 typedef const char* CSHConstCharPtr_t;
@@ -28,8 +35,8 @@ extern const size_t CSH_STRING_MAX_STACK_CHAR_COUNT; // = ((2048 / CSH_CHAR_SIZE
 // Uses either calloc or alloca, depending on the value passed to in_status and whether CSH_ALLOCA_ENABLED = 0 or 1.
 // in_allocaDefault decides whether m_status needs to be explicitly set to CSHSSC_USE_ALLOCA to use alloca.
 // in_allocaDefault = true, means that it does not need to be set to CSHSSC_USE_ALLOCA, false means it does.
-// in_status is passed by reference, with it being set to CSHSSC_USE_ALLOCA if _alloca was used or CSHSSC_NONE if calloc was used.
-// This is a macro function, to ensure _alloca is called on the correct stack frame. 
+// in_status is passed by reference, with it being set to CSHSSC_USE_ALLOCA if CSH_alloca was used or CSHSSC_NONE if calloc was used.
+// This is a macro function, to ensure CSH_alloca is called on the correct stack frame. 
 #define CSH_STRING_CALLOC_MF(in_ptr, in_num, in_size, in_status, in_allocaDefault) \
 { \
     if (in_ptr == NULL) \
@@ -38,7 +45,7 @@ extern const size_t CSH_STRING_MAX_STACK_CHAR_COUNT; // = ((2048 / CSH_CHAR_SIZE
         ((in_allocaDefault && *in_status != CSHSSC_DONT_USE_ALLOCA) || (!in_allocaDefault && *in_status == CSHSSC_USE_ALLOCA))) \
         { \
             size_t sizeInBytes = in_num * in_size; \
-            in_ptr = _alloca(sizeInBytes); \
+            in_ptr = (CSHCharPtr_t)CSH_alloca(sizeInBytes); \
             \
             if (in_ptr != NULL) \
             { \
@@ -55,7 +62,7 @@ extern const size_t CSH_STRING_MAX_STACK_CHAR_COUNT; // = ((2048 / CSH_CHAR_SIZE
             { \
                 *in_status = CSHSSC_NONE; \
             } \
-            in_ptr = calloc(in_num, in_size); \
+            in_ptr = (CSHCharPtr_t)calloc(in_num, in_size); \
         } \
     } \
 }

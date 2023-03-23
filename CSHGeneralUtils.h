@@ -11,8 +11,8 @@ inline size_t CSH_internal_strnlen_s(const char* in_str, size_t in_strSize)
 		return in_strSize;
 	}
 	
-	void* result = memchr((const void*)in_str, '\0', in_strSize);
-	return (result != NULL) ? (size_t)(result - (void*)in_str) : in_strSize;
+	void* result = memchr((void*)in_str, '\0', in_strSize);
+	return (result != NULL) ? (size_t)((char*)result - in_str) : in_strSize;
 }
 
 inline int CSH_internal_strcpy_s(char* in_dest, size_t in_destSize, const char* in_src)
