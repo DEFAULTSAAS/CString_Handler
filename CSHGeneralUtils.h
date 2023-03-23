@@ -32,10 +32,11 @@ inline int CSH_internal_strcpy_s(char* in_dest, size_t in_destSize, const char* 
 	if (in_destSize == 0 || result >= in_destSize)
 	{
 		in_dest[0] = '\0';
-		return result;
+		return -3;
 	}
 	
-	return strcpy(in_dest, in_src);
+	strcpy(in_dest, in_src);
+	return 0;
 }
 
 #define CSH_STRCPY_MF(in_dest, in_destSize, in_src) CSH_internal_strcpy_s(in_dest, in_destSize, in_src)
