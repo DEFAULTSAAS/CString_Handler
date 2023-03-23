@@ -7,6 +7,13 @@ const size_t CSH_CHAR_SIZE = sizeof(CSHChar_t);
 // 2048 - 1, to account for the extra null terminating character, as the string should fit within 2KB of ram.
 const size_t CSH_STRING_MAX_STACK_CHAR_COUNT = ((2048 / CSH_CHAR_SIZE) - 1);
 
+#ifdef _WIN32
+void* CSH_alloca(size_t in_size) { return _alloca(in_size); }
+#else
+#include<alloca.h>
+void* CSH_alloca(size_t in_size) { return alloca(in_size); }
+#endif
+
 S_CSHString CSH_string_create_cstr(CSHConstCharPtr_t in_str, size_t in_maxSize)
 {
     size_t result = CSH_STRNLEN_MF(in_str, (in_maxSize + 1));

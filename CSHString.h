@@ -5,13 +5,6 @@
 #include <stdbool.h>
 #include <malloc.h>
 
-#ifdef _WIN32
-inline void* CSH_alloca(size_t in_size) { return _alloca(in_size); }
-#else
-#include<alloca.h>
-inline void* CSH_alloca(size_t in_size) { return alloca(in_size); }
-#endif
-
 typedef char CSHChar_t;
 typedef char* CSHCharPtr_t;
 typedef const char* CSHConstCharPtr_t;
@@ -31,6 +24,9 @@ extern const size_t CSH_STRING_MAX_STACK_CHAR_COUNT; // = ((2048 / CSH_CHAR_SIZE
 #define CSH_STRING_MAX_CSTR_CHAR_COUNT_M 2047
 #define CSH_STRING_DEFAULT_M (S_CSHString){NULL, 0, 0, 0, 0, (CSH_STRING_MAX_CSTR_CHAR_COUNT_M + 1)}
 #define CSH_STRING_ERROR_M(in_errorCode) (S_CSHString){NULL, in_errorCode, 0, 0, 0, (CSH_STRING_MAX_CSTR_CHAR_COUNT_M + 1)}
+
+// Need a generalised alloca function, as its definition can change between OS's.
+void* CSH_alloca(size_t in_size);
 
 // Uses either calloc or alloca, depending on the value passed to in_status and whether CSH_ALLOCA_ENABLED = 0 or 1.
 // in_allocaDefault decides whether m_status needs to be explicitly set to CSHSSC_USE_ALLOCA to use alloca.
