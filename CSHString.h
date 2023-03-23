@@ -19,6 +19,7 @@ extern const size_t CSH_STRING_MAX_STACK_CHAR_COUNT; // = ((2048 / CSH_CHAR_SIZE
 // [ #define CSH_STRING_MAX_CSTR_CHAR_COUNT_M ]
 // The general maximum size in characters a cstr should be, not including the null terminating character.
 
+// TODO: Add support for alloca to all CSH function which can support it.
 #define CSH_STRING_ALLOCA_ENABLED_M 1
 #define CSH_STRING_ASSERT_ENABLED_M 1
 #define CSH_STRING_MAX_CSTR_CHAR_COUNT_M 2047
